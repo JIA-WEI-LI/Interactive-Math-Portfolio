@@ -12,9 +12,10 @@ interface HeaderMenuButtonProps {
     label: string;
     icon: React.ReactNode;
     sections: MenuSection[];
+    disabled?: boolean;
 }
 
-const HeaderMenuButton: React.FC<HeaderMenuButtonProps> = ({ label, icon, sections }) => {
+const HeaderMenuButton: React.FC<HeaderMenuButtonProps> = ({ label, icon, sections, disabled }) => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -31,23 +32,25 @@ const HeaderMenuButton: React.FC<HeaderMenuButtonProps> = ({ label, icon, sectio
     return (
         <div className="relative" ref={containerRef}>
             <button
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => !disabled && setIsOpen(!isOpen)}
                 className={cn(
                     "flex items-center gap-2 px-3 py-1.5 rounded-[4px] text-[12px] transition-all duration-200 border",
-                    isOpen
-                        ? "bg-white/[0.08] border-white/10 text-white"
-                        : "bg-white/[0.04] border-white/[0.05] text-white/90 hover:bg-white/[0.08] hover:border-white/10"
+                    disabled
+                        ? "bg-white/[0.02] border-white/[0.02] text-white/30 cursor-default"
+                        : isOpen
+                            ? "bg-white/[0.08] border-white/10 text-white"
+                            : "bg-white/[0.04] border-white/[0.05] text-white/90 hover:bg-white/[0.08] hover:border-white/10"
                 )}
             >
                 <div className="flex items-center gap-2">
                     {icon}
                     <span>{label}</span>
                 </div>
-                <ChevronDown size={12} className={cn("ml-1 opacity-60 transition-transform duration-200", isOpen && "rotate-180")} />
+                <ChevronDown size={12} className={cn("ml-1 opacity-60 transition-transform duration-200", isOpen && "rotate-180", disabled && "opacity-20")} />
             </button>
 
             <AnimatePresence>
-                {isOpen && (
+                {isOpen && !disabled && (
                     <motion.div
                         initial={{ opacity: 0, y: 4, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -95,25 +98,30 @@ interface PageLayoutProps {
 }
 
 export const PageLayout: React.FC<PageLayoutProps> = ({ title, children, id, action }) => {
-    const sourceSections: MenuSection[] = [
-        {
-            title: "控制項原始碼",
-            items: id === 'latex-symbols'
-                ? [{ label: "latexSymbols.ts", href: "https://github.com/JIA-WEI-LI/Interactive-Math-Portfolio/blob/main/src/data/latexSymbols.ts" }]
-                : id === 'latex-colors'
-                    ? [{ label: "latexColors.ts", href: "https://github.com/JIA-WEI-LI/Interactive-Math-Portfolio/blob/main/src/data/latexColors.ts" }]
-                    : [{ label: "LatexExampleCard" }]
-        },
-        {
-            title: "頁面原始碼",
-            items: [
-                { label: "Typescript (TSX)" },
-                { label: "Markdown (MD)" }
-            ]
-        }
-    ];
+    const sourceSections: MenuSection[] = [];
 
-    const documentationSections: MenuSection[] = [
+    // Only add data source section for specific pages
+    if (id === 'latex-symbols') {
+        sourceSections.push({
+            title: "控制項原始碼",
+            items: [{ label: "latexSymbols.ts", href: "https://github.com/JIA-WEI-LI/Interactive-Math-Portfolio/blob/main/src/data/latexSymbols.ts" }]
+        });
+    } else if (id === 'latex-colors') {
+        sourceSections.push({
+            title: "控制項原始碼",
+            items: [{ label: "latexColors.ts", href: "https://github.com/JIA-WEI-LI/Interactive-Math-Portfolio/blob/main/src/data/latexColors.ts" }]
+        });
+    }
+
+    // Always add the page source section
+    sourceSections.push({
+        title: "頁面原始碼",
+        items: [
+            { label: "Typescript (TSX)", href: `https://github.com/JIA-WEI-LI/Interactive-Math-Portfolio/blob/main/src/pages/${id.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')}.tsx` }
+        ]
+    });
+
+    const documentationSections: MenuSection[] = id === 'matrix' ? [] : [
         {
             title: "線上參考資源",
             items: id === 'latex-symbols'
@@ -150,6 +158,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ title, children, id, act
                                 label="Documentation"
                                 icon={<BookOpen size={14} />}
                                 sections={documentationSections}
+                                disabled={id === 'matrix'}
                             />
                             <HeaderMenuButton
                                 label="Source"

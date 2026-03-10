@@ -20,7 +20,8 @@ import {
   Search,
   ExternalLink,
   ChevronRight,
-  Copy
+  Copy,
+  Github
 } from 'lucide-react';
 
 // --- Components ---
@@ -411,7 +412,7 @@ export default function App() {
                         <div className="text-sm font-medium">MathPortfolio</div>
                         <div className="text-[10px] text-slate-500">© 2025 Microsoft. All rights reserved.</div>
                       </div>
-                      <span className="text-[13px] text-white font-normal mr-1">1.1.0.0</span>
+                      <span className="text-[13px] text-white font-normal mr-1">1.2.0.0</span>
                       <ChevronDown size={16} className={cn("transition-transform duration-300", isAboutExpanded && "rotate-180")} />
                     </button>
                     <AnimatePresence>
@@ -427,9 +428,9 @@ export default function App() {
                             <div className="p-4 border-t border-win-border flex items-center justify-between group">
                               <span className="text-slate-400">To clone this repository</span>
                               <div className="flex items-center gap-2 bg-black/20 dark:bg-black/40 px-3 py-1.5 rounded border border-win-border">
-                                <code className="text-[11px] font-mono text-slate-300">git clone https://github.com/microsoft/WinUI-Gallery</code>
+                                <code className="text-[11px] font-mono text-slate-300">git clone https://github.com/JIA-WEI-LI/Interactive-Math-Portfolio</code>
                                 <button
-                                  onClick={() => navigator.clipboard.writeText("git clone https://github.com/microsoft/WinUI-Gallery")}
+                                  onClick={() => navigator.clipboard.writeText("git clone https://github.com/JIA-WEI-LI/Interactive-Math-Portfolio")}
                                   className="p-1 hover:bg-white/10 rounded transition-colors"
                                 >
                                   <Copy size={12} className="text-slate-400" />
@@ -438,16 +439,26 @@ export default function App() {
                             </div>
 
                             {/* Bug Report Section */}
-                            <button className="p-4 border-t border-win-border flex items-center justify-between hover:bg-white/5 transition-colors group text-left">
+                            <a
+                              href="https://github.com/JIA-WEI-LI/Interactive-Math-Portfolio/issues"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-4 border-t border-win-border flex items-center justify-between hover:bg-white/5 transition-colors group text-left no-underline"
+                            >
                               <span className="text-slate-400">File a bug or request new sample</span>
                               <ExternalLink size={14} className="text-slate-500 group-hover:text-win-accent transition-colors" />
-                            </button>
+                            </a>
 
                             {/* Dependencies Section */}
                             <div className="p-4 border-t border-win-border bg-black/10 dark:bg-black/20 pb-6">
                               <div className="text-slate-400 font-medium mb-3">Dependencies & references</div>
-                              <div className="space-y-2.5 flex flex-col items-start px-2">
-                                <a href="#" className="text-sky-400 hover:underline leading-none">WinUI 3</a>
+                              <div className="space-y-3 flex flex-col items-start px-2">
+                                <a href="https://github.com/JIA-WEI-LI/Interactive-Math-Portfolio" target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:underline leading-none flex items-center gap-2">
+                                  <Github size={12} /> GitHub Repository
+                                </a>
+                                <a href="https://github.com/microsoft/WinUI-Gallery" target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:underline leading-none flex items-center gap-2">
+                                  <ExternalLink size={12} /> WinUI 3 Gallery
+                                </a>
                               </div>
                             </div>
 
