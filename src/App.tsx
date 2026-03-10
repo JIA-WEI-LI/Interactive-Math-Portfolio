@@ -37,6 +37,7 @@ import { LatexScripts } from './pages/LatexScripts';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
 import { cn } from './utils/cn';
+import { AutoSuggestBox, SuggestionItem } from './components/AutoSuggestBox';
 
 // --- Types ---
 export type Page = 'home' | 'about' | 'contact' | 'matrix' | 'latex-symbols' | 'latex-colors' | 'latex-fonts' | 'latex-scripts' | 'latex-playground' | 'latex-arrays';
@@ -55,8 +56,27 @@ export default function App() {
   const [isMobileMathToolsOpen, setIsMobileMathToolsOpen] = useState(false);
   const [isMobileLatexToolsOpen, setIsMobileLatexToolsOpen] = useState(false);
 
+  const searchItems: SuggestionItem[] = [
+    { id: 'home', title: '首頁', category: '導覽' },
+    { id: 'latex-symbols', title: 'LaTeX 常用符號表', category: 'LaTeX 工具' },
+    { id: 'latex-colors', title: 'LaTeX 顏色樣式', category: 'LaTeX 工具' },
+    { id: 'latex-fonts', title: 'LaTeX 文字與字型', category: 'LaTeX 工具' },
+    { id: 'latex-scripts', title: 'LaTeX 上下標與積分', category: 'LaTeX 工具' },
+    { id: 'latex-arrays', title: 'LaTeX 陣列與方程', category: 'LaTeX 工具' },
+    { id: 'latex-playground', title: 'LaTeX 試算區', category: 'LaTeX 工具' },
+    { id: 'matrix', title: '矩陣計算機', category: '數學工具' },
+    { id: 'about', title: '關於開發者', category: '資訊' },
+    { id: 'contact', title: '聯絡資訊', category: '資訊' }
+  ];
 
+  const handleSearchSelect = (item: SuggestionItem) => {
+    setActivePage(item.id as Page);
+    setIsMobileSearchOpen(false);
 
+    // Automatically open submenus if necessary
+    if (item.category === 'LaTeX 工具') setIsLatexToolsOpen(true);
+    if (item.category === '數學工具') setIsMathToolsOpen(true);
+  };
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
@@ -121,30 +141,13 @@ export default function App() {
           </div>
         </div>
 
-        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 w-full max-w-md px-4 pointer-events-none">
-          <div className="relative w-full pointer-events-auto">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-            <input
-              type="text"
-              placeholder="搜尋教材或功能..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="win-input w-full pl-9 pr-9 py-1.5"
-            />
-            <AnimatePresence>
-              {searchQuery && (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-win-accent transition-colors"
-                >
-                  <X size={14} />
-                </motion.button>
-              )}
-            </AnimatePresence>
-          </div>
+        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 w-full max-w-md px-4">
+          <AutoSuggestBox
+            items={searchItems}
+            placeholder="搜尋教材或功能..."
+            onSelect={handleSearchSelect}
+            className="pointer-events-auto"
+          />
         </div>
 
         <div className="flex-1 lg:flex-none lg:w-64 flex justify-end px-4"></div>
@@ -162,34 +165,13 @@ export default function App() {
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
                 className="fixed top-0 left-0 right-0 h-16 bg-win-bg border-b border-win-border z-[130] flex items-center px-4 shadow-lg"
               >
-                <div className="relative w-full">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-                  <input
-                    autoFocus
-                    type="text"
+                <div className="w-full">
+                  <AutoSuggestBox
+                    items={searchItems}
                     placeholder="搜尋教材或功能..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="win-input w-full pl-10 pr-16 py-2 text-base"
+                    onSelect={handleSearchSelect}
+                    className="pointer-events-auto"
                   />
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                    <AnimatePresence>
-                      {searchQuery && (
-                        <motion.button
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          onClick={() => setSearchQuery('')}
-                          className="p-1.5 text-gray-400 hover:text-win-accent transition-colors"
-                        >
-                          <X size={18} />
-                        </motion.button>
-                      )}
-                    </AnimatePresence>
-                    <button onClick={() => setIsMobileSearchOpen(false)} className="p-1.5 text-gray-400 hover:text-gray-600">
-                      <ChevronRight className="rotate-90" size={18} />
-                    </button>
-                  </div>
                 </div>
               </motion.div>
             </div>
@@ -412,7 +394,7 @@ export default function App() {
                         <div className="text-sm font-medium">MathPortfolio</div>
                         <div className="text-[10px] text-slate-500">© 2025 Microsoft. All rights reserved.</div>
                       </div>
-                      <span className="text-[13px] text-white font-normal mr-1">1.2.0.0</span>
+                      <span className="text-[13px] text-white font-normal mr-1">1.2.1.0</span>
                       <ChevronDown size={16} className={cn("transition-transform duration-300", isAboutExpanded && "rotate-180")} />
                     </button>
                     <AnimatePresence>
