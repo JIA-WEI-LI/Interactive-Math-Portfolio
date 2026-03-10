@@ -13,6 +13,10 @@ export const MathRenderer: React.FC<MathRendererProps> = ({ content, displayMode
       return katex.renderToString(content, {
         throwOnError: false,
         displayMode: displayMode,
+        macros: {
+          "\\iiiint": "\\int\\!\\!\\!\\int\\!\\!\\!\\int\\!\\!\\!\\int",
+          "\\idotsint": "\\int\\!\\cdots\\!\\int"
+        }
       });
     } catch (error) {
       console.error("KaTeX rendering error:", error);
@@ -21,9 +25,9 @@ export const MathRenderer: React.FC<MathRendererProps> = ({ content, displayMode
   }, [content, displayMode]);
 
   return (
-    <span 
-      className={className} 
-      dangerouslySetInnerHTML={{ __html: html }} 
+    <span
+      className={className}
+      dangerouslySetInnerHTML={{ __html: html }}
     />
   );
 };
